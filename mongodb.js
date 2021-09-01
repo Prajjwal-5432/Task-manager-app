@@ -10,14 +10,21 @@ MongoClient.connect(URL, { useNewUrlParser: true }, (error, client) => {
 
     const db = client.db(databaseName)
     
-     db.collection('users').findOne({ _id: ObjectId("612e04206c9041622738f7cf") }, (error, user) => {
-        if(error) {
-            return console.log('Cannot find the user');
+    db.collection('users').updateOne({
+        _id: ObjectId("612f47dc9037e8e9cb12f0d4")
+    }, {
+        $inc: {
+            age: 1
         }
-        console.log(user);
-    }) 
+    }).then(result => console.log(result))
+    .catch(error => console.log(error))
 
-    db.collection('tasks').find({ completed: false }).forEach(doc => {
-        console.log(doc);
-    });
+    db.collection('tasks').updateMany({
+        completed: true
+    }, {
+        $set: {
+            completed: false
+        }
+    }).then(result => console.log(result))
+    .catch(error => console.log(error))
 })
