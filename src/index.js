@@ -26,12 +26,12 @@ app.get('/users', (req, res) => {
 //Get single user details by ID
 app.get('/users/:id', (req, res) => {
     const _id = req.params.id
-    User.findById(_id).then((user) => {
+    User.findById(_id).then(user => {
         if(!user) return res.status(404).send()
 
         res.send(user)
     })
-    .catch((e) => res.status(500).send())
+    .catch(e => res.status(500).send())
 })
 
 //Enter task details
@@ -40,6 +40,23 @@ app.post('/tasks', (req, res) => {
 
     task.save().then(() => res.status(201).send(task))
     .catch(error => res.status(400).send(error))
+})
+
+//Get all tasks details
+app.get('/tasks', (req, res) => {
+    Task.find({}).then(tasks => res.status(200).send(tasks))
+    .catch(error => res.status(500).send())
+})
+
+//Get single task details by ID
+app.get('/tasks/:id', (req, res) => {
+    const _id = req.params.id
+    Task.findById(_id).then(task => {
+        if(!task) return res.status(404).send()
+        
+        res.send(task)
+    })
+    .catch(e => res.status(500).send())
 })
 
 app.listen(port, () => {
