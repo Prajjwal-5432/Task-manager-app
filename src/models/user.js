@@ -8,17 +8,9 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    age: {
-        type: Number,
-        default: 0,
-        validate(value) {
-            if (value < 0) {
-                throw new Error('Age must be a greater than zero')
-            }
-        }
-    },
     email: {
         type: String,
+        unique: true,
         required: true,
         trim: true,
         validate(value) {
@@ -37,9 +29,31 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Bad password')
             }
         }
+    },
+    age: {
+        type: Number,
+        default: 0,
+        validate(value) {
+            if (value < 0) {
+                throw new Error('Age must be a greater than zero')
+            }
+        }
     }
 })
 
+userSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({ email })
+
+    if (!user) throw new Error('Unable to login')
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) throw new Error('Unable to login')
+
+    return user
+}
+
+//Hash the password before saving
 userSchema.pre('save', async function (next) {
     const user = this
     console.log('just before saving')
