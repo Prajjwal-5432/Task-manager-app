@@ -8,8 +8,6 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 
-const router = new express.Router()
-
 app.use(userRouter)
 
 app.use(taskRouter)
@@ -17,3 +15,15 @@ app.use(taskRouter)
 app.listen(port, () => {
     console.log('Server is up and running on port ' + port)
 })
+
+const jwt = require('jsonwebtoken')
+
+const myFunction = async () => {
+    const token = jwt.sign({ _id: 'abc123' }, 'nodecourse', { expiresIn: '1 seconds' })
+    console.log(token)
+
+    const data = jwt.verify(token, 'nodecourse')
+    console.log(data)
+}
+
+myFunction()
