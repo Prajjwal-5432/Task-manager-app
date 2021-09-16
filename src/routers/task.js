@@ -24,8 +24,15 @@ router.get('/tasks', auth, async (req, res) => {
     }
     if (req.query.completed) match.completed = req.query.completed === 'true' ? true : false
     try {
-        const tasks = await Task.find(match)
-        res.status(200).send(tasks)
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip)
+            }
+        })
+        res.status(200).send(req.user.tasks)
     } catch (e) {
         res.status(500).send()
     }
